@@ -56,15 +56,12 @@ namespace Build_From_Inventory
 			return null;
 		}
 
-		//TODO: Transpile in ThingsAvailableAnywhere to search inv, count need.count, and save to cache
 		//public bool ThingsAvailableAnywhere(ThingDefCountClass need, Pawn pawn)
 		public static bool OrInInventory(ItemAvailability item, ThingDefCountClass need, Pawn pawn)
 		{
 			if (item.ThingsAvailableAnywhere(need, pawn)) return true;
 
-			ThingDef def = need.thingDef;
-			return pawn.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer)
-				.Any(p => p.inventory?.GetDirectlyHeldThings().Any(t => t.def == def) ?? false);
+			return pawn.Map.GetComponent<ItemInvAvailabilityMapComp>().ThingsAvailableInventories(need.thingDef, pawn);
 		}
 	}
 
