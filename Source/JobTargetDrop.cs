@@ -42,6 +42,8 @@ namespace Build_From_Inventory
 					}
 					else
 					{
+						actor.Map.reservationManager.Release(thing, actor, curJob);//Someone else might want the rest of the stack
+
 						ForbidUtility.SetForbidden(droppedThing, false, false);
 						actor.Reserve(droppedThing, curJob, stackCount: count);
 						curJob.SetTarget(haulableInd, droppedThing);
