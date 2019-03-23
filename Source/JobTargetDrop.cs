@@ -30,11 +30,12 @@ namespace Build_From_Inventory
 				Pawn actor = toil.actor;
 				Job curJob = actor.jobs.curJob;
 				Thing thing = curJob.GetTarget(haulableInd).Thing;
-				int count = Mathf.Min(curJob.count, thing.stackCount);
 				
 				if (thing.holdingOwner.Owner is Pawn_InventoryTracker holder)
 				{
+					int count = Mathf.Min(curJob.count, thing.stackCount);
 					Log.Message($"{holder.pawn} dropping {thing}x{count} for {actor}");
+
 					holder.innerContainer.TryDrop(thing, ThingPlaceMode.Direct, count, out Thing droppedThing);
 					if (droppedThing == null)
 					{
