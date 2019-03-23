@@ -45,7 +45,7 @@ namespace Build_From_Inventory
 						actor.Map.reservationManager.Release(thing, actor, curJob);//Someone else might want the rest of the stack
 
 						ForbidUtility.SetForbidden(droppedThing, false, false);
-						actor.Reserve(droppedThing, curJob, stackCount: count);
+						actor.Reserve(droppedThing, curJob, 100, count);//max pawns 100 why not
 						curJob.SetTarget(haulableInd, droppedThing);
 					}
 				}
