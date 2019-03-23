@@ -49,15 +49,10 @@ namespace Build_From_Inventory
 
 			//Others next. A little redundant on worker but it'll be empty
 			foreach (Pawn p in worker.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer))
-			{
-				Log.Message($"Pawn: {p}");
 				foreach (Thing t in p.inventory.GetDirectlyHeldThings())
-				{
-					Log.Message($"-Thing: {t}");
 					if (t.def == def)
 						return t;
-				}
-			}
+
 			return null;
 		}
 
