@@ -48,7 +48,8 @@ namespace Build_From_Inventory
 					return t;
 
 			//Others next. A little redundant on worker but it'll be empty
-			foreach (Pawn p in worker.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer))
+			foreach (Pawn p in worker.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer)
+				.Where(p =>!p.Position.IsForbidden(worker) &&	worker.CanReach(p, PathEndMode.OnCell, Danger.Some)))
 				foreach (Thing t in p.inventory.GetDirectlyHeldThings())
 					if (t.def == def)
 						return t;
