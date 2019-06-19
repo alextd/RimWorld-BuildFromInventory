@@ -36,7 +36,7 @@ namespace Build_From_Inventory
 					int count = Mathf.Min(curJob.count, thing.stackCount);
 					Log.Message($"{holder.pawn} dropping {thing}x{count} for {actor}");
 
-					holder.innerContainer.TryDrop(thing, ThingPlaceMode.Direct, count, out Thing droppedThing);
+					holder.innerContainer.TryDrop(thing, ThingPlaceMode.Near, count, out Thing droppedThing);
 					if (droppedThing == null)
 					{
 						actor.jobs.curDriver.EndJobWith(JobCondition.Incompletable);//Shoooot
