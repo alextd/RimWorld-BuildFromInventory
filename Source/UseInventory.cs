@@ -51,7 +51,8 @@ namespace Build_From_Inventory
 			foreach (Pawn p in worker.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer)
 				.Where(p =>!p.Position.IsForbidden(worker) &&	worker.CanReach(p, PathEndMode.OnCell, Danger.Some)))
 				foreach (Thing t in p.inventory.GetDirectlyHeldThings())
-					if (t.def == def)
+					//private WorkGiver_ConstructDeliverResources.ResourceValidator :(
+					if (t.def == def && worker.CanReserve(t))
 						return t;
 
 			return null;
