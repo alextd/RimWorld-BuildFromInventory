@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 using Verse;
 using Verse.AI;
 using RimWorld;
-using Harmony;
+using HarmonyLib;
 
 namespace Build_From_Inventory
 {
@@ -18,11 +18,11 @@ namespace Build_From_Inventory
 		//protected Job ResourceDeliverJobFor(Pawn pawn, IConstructible c, bool canRemoveExistingFloorUnderNearbyNeeders = true)
 		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
-			instructions = Harmony.Transpilers.MethodReplacer(instructions,
+			instructions = Transpilers.MethodReplacer(instructions,
 				AccessTools.Method(typeof(GenClosest), nameof(GenClosest.ClosestThingReachable)),
 				AccessTools.Method(typeof(UseInventory), nameof(OrUseInventory)));
 
-			return Harmony.Transpilers.MethodReplacer(instructions,
+			return Transpilers.MethodReplacer(instructions,
 				AccessTools.Method(typeof(ItemAvailability), nameof(ItemAvailability.ThingsAvailableAnywhere)),
 				AccessTools.Method(typeof(UseInventory), nameof(OrInInventory)));
 		}
