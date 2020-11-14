@@ -49,7 +49,9 @@ namespace Build_From_Inventory
 
 			//Others next. A little redundant on worker but it'll be empty
 			foreach (Pawn p in worker.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer)
-				.Where(p =>!p.Position.IsForbidden(worker) &&	worker.CanReach(p, PathEndMode.OnCell, Danger.Some)))
+					.Where(p => !p.Position.IsForbidden(worker))
+					.Where(p => !p.InMentalState)
+					.Where(p => worker.CanReach(p, PathEndMode.OnCell, Danger.Some)))
 				foreach (Thing t in p.inventory.GetDirectlyHeldThings())
 					if (t.def == def && worker.CanReserve(t))
 						return t;
