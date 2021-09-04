@@ -30,23 +30,30 @@ namespace Build_From_Inventory
 		//public static Thing ClosestThingReachable(IntVec3 root, Map map, ThingRequest thingReq, PathEndMode peMode, TraverseParms traverseParams, float maxDistance = 9999f, Predicate<Thing> validator = null, IEnumerable<Thing> customGlobalSearchSet = null, int searchRegionsMin = 0, int searchRegionsMax = -1, bool forceGlobalSearch = false, RegionType traversableRegionTypes = RegionType.Set_Passable, bool ignoreEntirelyForbiddenRegions = false)
 		public static Thing OrUseInventory(IntVec3 root, Map map, ThingRequest thingReq, PathEndMode peMode, TraverseParms traverseParams, float maxDistance = 9999f, Predicate<Thing> validator = null, IEnumerable<Thing> customGlobalSearchSet = null, int searchRegionsMin = 0, int searchRegionsMax = -1, bool forceGlobalSearch = false, RegionType traversableRegionTypes = RegionType.Set_Passable, bool ignoreEntirelyForbiddenRegions = false)
 		{
-			Thing thing = GenClosest.ClosestThingReachable(root, map, thingReq, peMode, traverseParams, maxDistance, validator, customGlobalSearchSet, searchRegionsMin, searchRegionsMax, forceGlobalSearch, traversableRegionTypes, ignoreEntirelyForbiddenRegions);
+			Thing thing = FindInOwnInventory(thingReq.singleDef, traverseParams.pawn);
 			if (thing != null) return thing;
 
-			thing = FindInInventory(thingReq.singleDef, traverseParams.pawn);
+			thing = GenClosest.ClosestThingReachable(root, map, thingReq, peMode, traverseParams, maxDistance, validator, customGlobalSearchSet, searchRegionsMin, searchRegionsMax, forceGlobalSearch, traversableRegionTypes, ignoreEntirelyForbiddenRegions);
+			if (thing != null) return thing;
 
-			Log.Message($"Found: {thingReq.singleDef}? ({thing})");
-		
-			return thing;
+			return FindInOthersInventory(thingReq.singleDef, traverseParams.pawn);
 		}
 
-		public static Thing FindInInventory(ThingDef def, Pawn worker)
+		public static Thing FindInOwnInventory(ThingDef def, Pawn worker)
 		{
 			//Worker first
-			foreach (Thing t in worker.inventory.GetDirectlyHeldThings())
+			foreach (Thing t in worker.inventory.GetDirectlyHeldThings().Concat(worker.carryTracker.GetDirectlyHeldThings()))
 				if (t.def == def)
+				{
+					Log.Message($"Found own thing: {def} ({t})");
 					return t;
+				}
 
+			return null;
+		}
+
+		public static Thing FindInOthersInventory(ThingDef def, Pawn worker)
+		{
 			//Others next. A little redundant on worker but it'll be empty
 			foreach (Pawn p in worker.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer)
 					.Where(p => !p.Position.IsForbidden(worker))
@@ -64,7 +71,9 @@ namespace Build_From_Inventory
 		{
 			if (item.ThingsAvailableAnywhere(need, pawn)) return true;
 
-			return pawn.Map.GetComponent<ItemInvAvailabilityMapComp>().ThingsAvailableInventories(need.thingDef, pawn);
+			return 
+				pawn.carryTracker.GetDirectlyHeldThings().Contains(need.thingDef) || 
+				pawn.Map.GetComponent<ItemInvAvailabilityMapComp>().ThingsAvailableInventories(need.thingDef, pawn.Faction);
 		}
 	}
 

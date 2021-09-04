@@ -24,14 +24,14 @@ namespace Build_From_Inventory
 			this.cachedResults.Clear();
 		}
 
-		public bool ThingsAvailableInventories(ThingDef def, Pawn pawn)
+		public bool ThingsAvailableInventories(ThingDef def, Faction faction)
 		{
-			int key = Gen.HashCombine(def.GetHashCode(), pawn.Faction);
+			int key = Gen.HashCombine(def.GetHashCode(), faction);
 			bool result;
 			if (!this.cachedResults.TryGetValue(key, out result))
 			{
-				result = pawn.Map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer)
-					.Any(p => p.inventory?.GetDirectlyHeldThings().Any(t => t.def == def) ?? false);
+				result = map.mapPawns.SpawnedPawnsInFaction(faction)
+					.Any(p => p.inventory.GetDirectlyHeldThings().Contains(def));
 				//Log.Message($"caching {def}");
 				this.cachedResults.Add(key, result);
 			}
