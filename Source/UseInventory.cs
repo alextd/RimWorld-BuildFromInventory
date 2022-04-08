@@ -80,18 +80,14 @@ namespace Build_From_Inventory
 	[HarmonyPatch(typeof(WorkGiver_ConstructDeliverResources), "FindAvailableNearbyResources")]
 	public static class NothingNearbyDummy
 	{
-		public static FieldInfo resourcesAvailableInfo = AccessTools.Field(typeof(WorkGiver_ConstructDeliverResources), "resourcesAvailable");
-		public static List<Thing> resourcesAvailable() =>
-			(List<Thing>)resourcesAvailableInfo.GetValue(null);
-
 		//private void FindAvailableNearbyResources(Thing firstFoundResource, Pawn pawn, out int resTotalAvailable)
-		public static bool Prefix(Thing firstFoundResource, ref int resTotalAvailable)
+		public static bool Prefix(Thing firstFoundResource, List<Thing> ___resourcesAvailable, ref int resTotalAvailable)
 		{
 			if (firstFoundResource.Spawned) return true;
 
 			//OMG please don't set static private lists and use them between methods.
-			resourcesAvailable().Clear();
-			resourcesAvailable().Add(firstFoundResource);
+			___resourcesAvailable.Clear();
+			___resourcesAvailable.Add(firstFoundResource);
 			resTotalAvailable = firstFoundResource.stackCount;
 			return false;
 		}
