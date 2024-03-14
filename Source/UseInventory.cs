@@ -66,14 +66,14 @@ namespace Build_From_Inventory
 			return null;
 		}
 
-		//public bool ThingsAvailableAnywhere(ThingDefCountClass need, Pawn pawn)
-		public static bool OrInInventory(ItemAvailability item, ThingDefCountClass need, Pawn pawn)
+		//public bool ThingsAvailableAnywhere(ThingDef need, int amount, Pawn pawn)
+		public static bool OrInInventory(ItemAvailability item, ThingDef need, int amount, Pawn pawn)
 		{
-			if (item.ThingsAvailableAnywhere(need, pawn)) return true;
+			if (item.ThingsAvailableAnywhere(need, amount, pawn)) return true;
 
 			return 
-				pawn.carryTracker.GetDirectlyHeldThings().Contains(need.thingDef) || 
-				pawn.Map.GetComponent<ItemInvAvailabilityMapComp>().ThingsAvailableInventories(need.thingDef, pawn.Faction);
+				pawn.carryTracker.GetDirectlyHeldThings().Contains(need) || 
+				pawn.Map.GetComponent<ItemInvAvailabilityMapComp>().ThingsAvailableInventories(need, pawn.Faction);
 		}
 	}
 
